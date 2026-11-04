@@ -4,7 +4,7 @@
 
 SizeKey turns your body measurements into the right size for clothing, innerwear, bras, footwear and diapers, in Indian, US, UK and EU charts and across 140+ brands.
 
-![SizeKey: your sizes for every category](screenshots/1-your-sizes.png)
+![SizeKey: your sizes for every category](1-your-sizes.png)
 
 ## Why SizeKey exists
 
@@ -35,19 +35,19 @@ SizeKey puts all of this in one place. You enter your measurements once and see 
 
 **Size by brand.** Every brand shows your size for each thing it sells, with notes on brands that run small or large.
 
-![Brand sizes](screenshots/2-brands.png)
+![Brand sizes](2-brands.png)
 
 **Innerwear.** Filter brands by clothing, innerwear or footwear.
 
-![Innerwear brands](screenshots/3-innerwear-brands.png)
+![Innerwear brands](3-innerwear-brands.png)
 
 **Men, US sizing, dark mode.** Switch between India and US shopping, and between cm/kg and inches/lb.
 
-![Men's sizes in US charts](screenshots/4-men-us-dark.png)
+![Men's sizes in US charts](4-men-us-dark.png)
 
 **Baby, on a phone.** Clothing by height, diapers by weight and first shoes by foot length.
 
-<img src="screenshots/5-baby-mobile.png" alt="Baby sizes on mobile" width="320">
+<img src="5-baby-mobile.png" alt="Baby sizes on mobile" width="320">
 
 ## Other features
 
