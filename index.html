@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Enter your measurements once and find your size for clothing, innerwear, bras, footwear and diapers across Indian, US, UK and EU charts and 140+ brands.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>SizeKey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: measurement panel on the left (sticky on desktop), results on the right.
+   A tailor's tape strip is the masthead; size cards read like sewn-in garment labels. */
+:root{
+  --paper:#F4F6FA; --surface:#FFFFFF; --ink:#17203A; --muted:#5A6382; --line:#D8DCE8;
+  --tape:#F1C232; --tape-ink:#2B2306; --accent:#2D49B5; --accent-soft:#E7EBF9; --on-accent:#FFFFFF;
+  --warn:#8A5300; --warn-bg:#FFF3D6;
+  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#0E1220; --surface:#161C2D; --ink:#E7EAF4; --muted:#9AA3C0; --line:#2A3250;
+  --tape:#E6B627; --tape-ink:#1D1705; --accent:#93A8FF; --accent-soft:#222B4B; --on-accent:#0E1220;
+  --warn:#F3C46E; --warn-bg:#2D2614; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#0E1220; --surface:#161C2D; --ink:#E7EAF4; --muted:#9AA3C0; --line:#2A3250;
+  --tape:#E6B627; --tape-ink:#1D1705; --accent:#93A8FF; --accent-soft:#222B4B; --on-accent:#0E1220;
+  --warn:#F3C46E; --warn-bg:#2D2614; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* masthead */
+.mast{display:grid;gap:14px;margin-bottom:24px}
+.mast-top{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:end;justify-content:space-between}
+h1{font-size:clamp(34px,6vw,52px);font-weight:800;letter-spacing:-.02em;line-height:1}
+h1 span{color:var(--muted);font-weight:500}
+.lede{margin:6px 0 0;color:var(--muted);max-width:56ch}
+.tape{position:relative;height:38px;border-radius:3px;background-color:var(--tape);overflow:hidden;
+  background-image:repeating-linear-gradient(90deg,var(--tape-ink) 0 1.5px,transparent 1.5px 40px),
+                   repeating-linear-gradient(90deg,var(--tape-ink) 0 1px,transparent 1px 8px);
+  background-size:100% 15px,100% 7px;background-repeat:no-repeat;background-position:0 0,0 0}
+.tape-nums{position:absolute;left:0;bottom:3px;display:flex;font-family:var(--f-mono);font-size:10px;font-weight:600;color:var(--tape-ink);white-space:nowrap}
+.tape-nums span{width:40px;flex:none;padding-left:3px}
+
+.toggles{display:flex;flex-wrap:wrap;gap:10px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;background:var(--surface);padding:3px}
+.seg button{border:0;background:none;padding:6px 14px;border-radius:999px;cursor:pointer;font-weight:600;font-size:13px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+
+/* layout */
+.layout{display:grid;gap:28px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:920px){.layout{grid-template-columns:350px minmax(0,1fr);align-items:start}
+  .panel{position:sticky;top:16px}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:18px}
+.label{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.who{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.who button{border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:8px 6px;cursor:pointer;text-align:center;line-height:1.2}
+.who b{display:block;font-size:14px}
+.who small{color:var(--muted);font-size:11px}
+.who button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.who button[aria-pressed="true"] small{color:inherit;opacity:.85}
+
+.example{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:8px 10px;font-size:13px;display:flex;gap:8px;align-items:center;justify-content:space-between}
+.example button{border:0;background:none;color:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0;font-size:13px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:grid;gap:3px;min-width:0}
+.field label{font-weight:600;font-size:13px}
+.inp{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;background:var(--paper);overflow:hidden}
+.inp:focus-within{border-color:var(--accent)}
+.inp input{flex:1;min-width:0;border:0;background:none;padding:8px 10px;font-family:var(--f-mono);font-size:15px;outline:none}
+.inp span{padding-right:10px;color:var(--muted);font-family:var(--f-mono);font-size:12px}
+.field p{margin:0;font-size:11.5px;color:var(--muted);line-height:1.35}
+details.howto{border-top:1px solid var(--line);padding-top:12px;font-size:13.5px}
+details.howto summary{cursor:pointer;font-weight:600}
+details.howto ul{margin:8px 0 0;padding-left:18px;color:var(--muted);display:grid;gap:4px}
+
+.people{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:14px}
+.people-list{display:flex;flex-wrap:wrap;gap:6px}
+.person{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:var(--paper);font-size:13px}
+.person button{border:0;background:none;cursor:pointer;padding:4px 4px 4px 11px;font-weight:600}
+.person button.x{padding:4px 9px 4px 4px;color:var(--muted);font-weight:400}
+.save{display:flex;gap:6px}
+.save input{flex:1;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--paper);padding:7px 10px}
+.btn{border:0;border-radius:8px;background:var(--ink);color:var(--paper);padding:7px 14px;font-weight:700;cursor:pointer}
+.empty-note{font-size:12.5px;color:var(--muted);margin:0}
+
+/* results */
+.results{display:grid;gap:36px;min-width:0}
+.sec-head{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;justify-content:space-between;margin-bottom:14px}
+.sec-head h2{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.sec-head p{margin:0;color:var(--muted);font-size:13.5px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px}
+.tag{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px 13px;display:grid;gap:6px;align-content:start;min-width:0}
+.tag::after{content:"";position:absolute;top:12px;right:12px;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--line);background:var(--paper)}
+.big{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.big .sys{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.big .val{font-family:var(--f-display);font-size:38px;font-weight:800;line-height:1.05;letter-spacing:-.02em;overflow-wrap:anywhere}
+.alts{display:flex;flex-wrap:wrap;gap:5px}
+.alt{font-family:var(--f-mono);font-size:12px;background:var(--accent-soft);border-radius:5px;padding:2px 7px}
+.alt i{font-style:normal;color:var(--muted);margin-right:4px}
+.basis{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.hint{font-size:12.5px;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:5px 8px}
+.missing{color:var(--muted);font-size:13.5px}
+.tag.is-missing .big .val{color:var(--line)}
+
+/* brands */
+.toolbar{display:grid;gap:10px;margin-bottom:6px}
+.search{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:0 12px}
+.search input{flex:1;min-width:0;border:0;background:none;padding:10px 6px;outline:none;font-size:15px}
+.search:focus-within{border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted)}
+.chips button[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);background:var(--accent-soft)}
+.brands{list-style:none;margin:0;padding:0}
+.brand{display:grid;grid-template-columns:minmax(0,1fr);gap:7px;padding:13px 2px;border-bottom:1px solid var(--line)}
+@media (min-width:640px){.brand{grid-template-columns:minmax(150px,220px) minmax(0,1fr);align-items:start;gap:16px}}
+.bname{font-weight:700;font-size:15px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.origin{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--muted)}
+.bnote{font-size:12.5px;color:var(--muted);margin-top:2px}
+.bsizes{display:flex;flex-wrap:wrap;gap:6px}
+.bs{display:inline-flex;align-items:baseline;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:4px 9px;font-size:12.5px;color:var(--muted)}
+.bs b{font-family:var(--f-mono);font-size:14px;color:var(--ink)}
+.bs.off b{color:var(--line)}
+.custom{background:var(--accent-soft);border-radius:10px;padding:13px 12px;border-bottom:0;margin-bottom:6px}
+.count{font-size:13px;color:var(--muted)}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;max-width:75ch}
+@media (prefers-reduced-motion:no-preference){.val{transition:color .2s}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="mast-top">
+      <div>
+        <h1>SizeKey</h1>
+        <p class="lede">Measure once. See your size in Indian, US, UK and EU charts, and in the brands you actually shop, from clothes to innerwear, shoes and diapers.</p>
+      </div>
+      <div class="toggles">
+        <div class="seg" role="group" aria-label="Shopping in">
+          <button id="rg-IN" data-region="IN">India</button><button id="rg-US" data-region="US">US</button>
+        </div>
+        <div class="seg" role="group" aria-label="Units">
+          <button id="un-cm" data-unit="cm">cm · kg</button><button id="un-in" data-unit="in">in · lb</button>
+        </div>
+      </div>
+    </div>
+    <div class="tape" aria-hidden="true"><div class="tape-nums" id="tapeNums"></div></div>
+  </header>
+
+  <div class="layout">
+    <aside class="panel" aria-label="Your measurements">
+      <div style="display:grid;gap:8px">
+        <span class="label">Who is this for?</span>
+        <div class="who" id="who"></div>
+      </div>
+      <div style="display:grid;gap:10px">
+        <span class="label">Measurements</span>
+        <div class="example" id="example" hidden><span>Example numbers. Replace them with yours.</span><button id="clearBtn" type="button">Clear</button></div>
+        <div class="fields" id="fields"></div>
+      </div>
+      <details class="howto">
+        <summary>How to measure</summary>
+        <ul>
+          <li>Use a soft tailor's tape. No tape? Use a string, then lay it against a ruler.</li>
+          <li>Keep the tape level and snug, not tight. Measure over light clothing.</li>
+          <li>For foot length, stand on paper against a wall and mark the tip of your longest toe. Measure both feet and use the longer one.</li>
+          <li>For babies, measure lying down, from the top of the head to the heel.</li>
+        </ul>
+      </details>
+      <div class="people">
+        <span class="label">Saved people</span>
+        <div class="people-list" id="people"></div>
+        <form class="save" id="saveForm">
+          <input id="saveName" placeholder="Name, e.g. Mom or Aarav" maxlength="24" aria-label="Name for these measurements">
+          <button class="btn" type="submit">Save</button>
+        </form>
+      </div>
+    </aside>
+
+    <main class="results">
+      <section>
+        <div class="sec-head"><h2>Your sizes</h2><p id="stdNote"></p></div>
+        <div class="cards" id="cards"></div>
+      </section>
+      <section>
+        <div class="sec-head"><h2>Size by brand</h2><p class="count" id="count"></p></div>
+        <div class="toolbar">
+          <label class="search"><span aria-hidden="true" style="color:var(--muted)">⌕</span>
+            <input id="q" type="search" placeholder="Search a brand, or type any brand name" aria-label="Search brands"></label>
+          <div class="chips" id="types" role="group" aria-label="Filter by type"></div>
+        </div>
+        <ul class="brands" id="brands"></ul>
+      </section>
+    </main>
+  </div>
+
+  <p class="foot">Sizes are estimates from standard size charts and each brand's usual fit. Brands change cuts between styles, so check the size chart on the product page before you buy. Your measurements never leave your device. <a href="privacy.html" style="color:inherit">Privacy policy</a>. Bra sizes follow the band-and-cup method most Indian and US brands publish; specialist fitters may suggest one band smaller and one cup larger.</p>
+</div>
+
+<script>
+(function(){
+// ---------- helpers ----------
+const IN2CM=2.54, KG2LB=2.20462;
+const mid=(vals,top)=>vals.map((v,i)=>i<vals.length-1?(v+vals[i+1])/2:v+top);
+const inchUB=(start,count,step=2)=>Array.from({length:count},(_,k)=>(start+step*k+step/2)*IN2CM);
+const seq=(start,count,step)=>Array.from({length:count},(_,k)=>String(start+step*k));
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+// ---------- women's base chart (US numeric 0–20) ----------
+const WB=[81,84,86.5,89,91.5,95,98.5,102,106,111,116];
+const WW=[61,64,66.5,69,71.5,75,78.5,82,86,91,96];
+const WH=[87,90,92.5,95,97.5,101,104.5,108,112,117,122];
+const USN=seq(0,11,2), UKN=seq(4,11,2), EUN=seq(30,11,2);
+const INL=['XS','S','M','L','XL','XXL','3XL','4XL','5XL'];
+const WL=['XS','S','M','L','XL','XXL','3XL'];
+const WLB={bust:[84.5,90,97,104,111,119,127],waist:[64.5,70,77,84,91,99,107],hip:[90.5,96,103,110,117,125,133]};
+
+const KIDH=[104,110,116,122,128,134,140,146,152,158,164,170];
+const kidScales={
+  USN:{name:'US',labels:['4','5','6','7','8','10','12','14','16'],by:{height:[106,114,122,128,134,142,150,158,166],weight:[17.7,20.4,23.6,26.3,31.7,37.2,43,50,57]}},
+  USL:{name:'US',labels:['XS (4–5)','S (6–7)','M (8)','L (10–12)','XL (14–16)'],by:{height:[114,128,134,150,166]}},
+  IN:{name:'India',labels:['3–4 Y','4–5 Y','5–6 Y','6–7 Y','7–8 Y','8–9 Y','9–10 Y','10–11 Y','11–12 Y','12–13 Y','13–14 Y','14–15 Y'],by:{height:KIDH}},
+  EU:{name:'EU',labels:KIDH.map(String),by:{height:KIDH}},
+};
+const diaperScales={
+  IN:{name:'India',labels:['NB','S','M','L','XL','XXL'],by:{weight:[5,7.5,11,13.5,16.5,25]}},
+  US:{name:'US',labels:['Newborn','Size 1','Size 2','Size 3','Size 4','Size 5','Size 6','Size 7'],by:{weight:[4.5,6,8,11.5,14.5,17.5,20,40]}},
+};
+const SHOE_NAMES={IN:'India',US:'US',UK:'UK',EU:'EU'};
+
+const CATS={
+  w_top:{name:'Tops, tees & shirts',short:'Tops',type:'a',need:['bust'],primary:{IN:'IN',US:'USL'},scales:{
+    IN:{name:'India',labels:INL,by:{bust:inchUB(32,9)}},
+    USL:{name:'US',labels:WL,by:{bust:WLB.bust}},
+    USN:{name:'US',labels:USN,by:{bust:mid(WB,4)}},
+    UK:{name:'UK',labels:UKN,by:{bust:mid(WB,4)}},
+    EU:{name:'EU',labels:EUN,by:{bust:mid(WB,4)}}}},
+  w_dress:{name:'Dresses & kurtas',short:'Dress',type:'a',need:['bust','waist','hip'],primary:{IN:'IN',US:'USN'},scales:{
+    IN:{name:'India',labels:INL,by:{bust:inchUB(32,9),waist:inchUB(26,9),hip:inchUB(36,9)}},
+    USN:{name:'US',labels:USN,by:{bust:mid(WB,4),waist:mid(WW,4),hip:mid(WH,4)}},
+    USL:{name:'US',labels:WL,by:WLB},
+    UK:{name:'UK',labels:UKN,by:{bust:mid(WB,4),waist:mid(WW,4),hip:mid(WH,4)}},
+    EU:{name:'EU',labels:EUN,by:{bust:mid(WB,4),waist:mid(WW,4),hip:mid(WH,4)}}}},
+  w_bottom:{name:'Jeans, trousers & leggings',short:'Jeans',type:'a',need:['waist'],primary:{IN:'W',US:'USN'},scales:{
+    W:{name:'Waist',labels:seq(24,9,2),by:{waist:inchUB(24,9)}},
+    INL:{name:'India',labels:INL,by:{waist:inchUB(26,9),hip:inchUB(36,9)}},
+    USN:{name:'US',labels:USN,by:{waist:mid(WW,4),hip:mid(WH,4)}},
+    USL:{name:'US',labels:WL,by:{waist:WLB.waist,hip:WLB.hip}},
+    UK:{name:'UK',labels:UKN,by:{waist:mid(WW,4),hip:mid(WH,4)}},
+    EU:{name:'EU',labels:EUN,by:{waist:mid(WW,4),hip:mid(WH,4)}}}},
+  w_bra:{name:'Bras',short:'Bra',type:'i',kind:'bra',need:['underbust','bust'],primary:{IN:'IN',US:'US'},names:{IN:'India',US:'US',UK:'UK',EU:'EU',FR:'FR'},keys:['IN','US','UK','EU','FR']},
+  w_panty:{name:'Panties & briefs',short:'Panty',type:'i',need:['hip'],primary:{IN:'IN',US:'USL'},scales:{
+    IN:{name:'India',labels:['S','M','L','XL','XXL','3XL','4XL'],by:{hip:[91,97,102,107,112,117,122]}},
+    USL:{name:'US',labels:WL,by:{hip:[87,93,99,106,114,122,130]}},
+    USN:{name:'US',labels:['4','5','6','7','8','9','10'],by:{hip:[87,93,99,106,114,122,130]}}}},
+  w_shoe:{name:'Footwear',short:'Shoes',type:'s',kind:'shoe',shoe:'W',need:['foot'],primary:{IN:'IN',US:'US'},names:SHOE_NAMES,keys:['IN','US','UK','EU']},
+
+  m_top:{name:'Shirts & T-shirts',short:'Shirt',type:'a',need:['chest'],primary:{IN:'IN',US:'USL'},scales:{
+    IN:{name:'India',labels:['XS (36)','S (38)','M (40)','L (42)','XL (44)','XXL (46)','3XL (48)','4XL (50)'],by:{chest:[89,95,103,110,118,126,133,141]}},
+    USL:{name:'US',labels:['XS','S','M','L','XL','XXL','3XL','4XL'],by:{chest:[89,95,103,110,118,126,133,141]}}}},
+  m_bottom:{name:'Jeans & trousers',short:'Jeans',type:'a',need:['waist'],primary:{IN:'W',US:'W'},scales:{
+    W:{name:'Waist',labels:seq(26,12,2),by:{waist:inchUB(26,12)}},
+    USL:{name:'US',labels:['XS','S','M','L','XL','XXL','3XL'],by:{waist:[74,81,89,97,107,117,127]}},
+    EU:{name:'EU',labels:seq(42,12,2),by:{waist:inchUB(26,12)}}}},
+  m_brief:{name:'Briefs, trunks & boxers',short:'Briefs',type:'i',need:['waist'],primary:{IN:'IN',US:'USL'},scales:{
+    IN:{name:'India',labels:['S','M','L','XL','XXL','3XL','4XL'],by:{waist:[80,85,90,95,100,105,110]}},
+    USL:{name:'US',labels:['S','M','L','XL','XXL','3XL'],by:{waist:[78.5,88.5,99,109,119,129]}}}},
+  m_vest:{name:'Vests & undershirts',short:'Vest',type:'i',need:['chest'],primary:{IN:'IN',US:'USL'},scales:{
+    IN:{name:'India',labels:seq(75,9,5).map(s=>s+' cm'),by:{chest:Array.from({length:9},(_,k)=>77.5+5*k)}},
+    USL:{name:'US',labels:['XS','S','M','L','XL','XXL','3XL','4XL'],by:{chest:[89,95,103,110,118,126,133,141]}}}},
+  m_shoe:{name:'Footwear',short:'Shoes',type:'s',kind:'shoe',shoe:'M',need:['foot'],primary:{IN:'IN',US:'US'},names:SHOE_NAMES,keys:['IN','US','UK','EU']},
+
+  k_top:{name:'Tops, dresses & sets',short:'Clothes',type:'a',need:['height'],primary:{IN:'IN',US:'USN'},scales:kidScales},
+  k_bottom:{name:'Bottoms',short:'Bottoms',type:'a',need:['height'],primary:{IN:'IN',US:'USN'},scales:kidScales},
+  k_inner:{name:'Innerwear',short:'Innerwear',type:'i',need:['height'],primary:{IN:'IN',US:'USN'},scales:kidScales},
+  k_shoe:{name:'Footwear',short:'Shoes',type:'s',kind:'shoe',shoe:'K',need:['foot'],primary:{IN:'IN',US:'US'},names:SHOE_NAMES,keys:['IN','US','UK','EU'],note:'C = child, Y = youth sizes'},
+
+  t_wear:{name:'Clothing',short:'Clothes',type:'a',need:['height'],primary:{IN:'IN',US:'US'},scales:{
+    IN:{name:'India',labels:['12–18 M','18–24 M','2–3 Y','3–4 Y','4–5 Y','5–6 Y'],by:{height:[83,90,98,104,110,116],weight:[12,13.5,15.5,17.5,19.5,21.5]}},
+    US:{name:'US',labels:['12M','18M','2T','3T','4T','5T'],by:{height:[78,83,91,99,107,114],weight:[11,12.5,14.5,16,18,20.5]}},
+    EU:{name:'EU',labels:['80','86','92','98','104','110','116'],by:{height:[80,86,92,98,104,110,116]}}}},
+  t_diaper:{name:'Diapers & pull-ups',short:'Diapers',type:'d',need:['weight'],primary:{IN:'IN',US:'US'},scales:diaperScales,note:'Weight ranges overlap. If your child is in the overlap or leaks, go one size up.'},
+  t_shoe:{name:'Footwear',short:'Shoes',type:'s',kind:'shoe',shoe:'K',need:['foot'],primary:{IN:'IN',US:'US'},names:SHOE_NAMES,keys:['IN','US','UK','EU'],note:'C = child sizes'},
+
+  b_wear:{name:'Clothing & bodysuits',short:'Clothes',type:'a',need:['height'],primary:{IN:'IN',US:'US'},scales:{
+    IN:{name:'India',labels:['0–3 M','3–6 M','6–9 M','9–12 M','12–18 M','18–24 M'],by:{height:[62,68,72,76,83,90],weight:[6,8,9,10,12,13.5]}},
+    US:{name:'US',labels:['Newborn','0–3M','3–6M','6–9M','9–12M','12M','18M','24M'],by:{height:[55,61,67,72,76,78,83,86],weight:[3.6,5.7,7.5,9,10.4,11,12.5,13.8]}},
+    EU:{name:'EU',labels:['50','56','62','68','74','80','86','92'],by:{height:[50,56,62,68,74,80,86,92]}}}},
+  b_diaper:{name:'Diapers',short:'Diapers',type:'d',need:['weight'],primary:{IN:'IN',US:'US'},scales:diaperScales,note:'Weight ranges overlap. If your baby is in the overlap or leaks, go one size up.'},
+  b_shoe:{name:'Booties & first shoes',short:'Shoes',type:'s',kind:'shoe',shoe:'K',need:['foot'],primary:{IN:'IN',US:'US'},names:SHOE_NAMES,keys:['IN','US','UK','EU'],note:'Soft soles are best until your baby walks steadily.'},
+};
+
+const FIELDS={
+  height:{label:'Height',kind:'len',help:{_:'Standing straight, no shoes.',B:'Lying down, head to heel.',T:'Standing, no shoes.'}},
+  weight:{label:'Weight',kind:'wt',help:{_:'Optional.',T:'Used for clothes and diapers.',B:'Used for clothes and diapers.',KG:'Optional, helps US sizing.',KB:'Optional, helps US sizing.'}},
+  bust:{label:'Bust',kind:'len',help:{_:'Fullest part, tape level.'}},
+  underbust:{label:'Underbust',kind:'len',help:{_:'Snug on the ribs, under the bust.'}},
+  chest:{label:'Chest',kind:'len',help:{_:'Fullest part, under the arms.'}},
+  waist:{label:'Waist',kind:'len',help:{_:'Narrowest part, above the navel.',M:'Where your trousers sit.'}},
+  hip:{label:'Hips',kind:'len',help:{_:'Fullest part of hips and seat.'}},
+  foot:{label:'Foot length',kind:'len',help:{_:'Heel to longest toe.'}},
+};
+
+const GROUPS={
+  W:{name:'Women',sub:'Adult',bg:'W',fields:['height','weight','bust','underbust','waist','hip','foot'],cats:['w_top','w_dress','w_bottom','w_bra','w_panty','w_shoe']},
+  M:{name:'Men',sub:'Adult',bg:'M',fields:['height','weight','chest','waist','foot'],cats:['m_top','m_bottom','m_brief','m_vest','m_shoe']},
+  KG:{name:'Girls',sub:'4–14 yrs',bg:'K',fields:['height','weight','foot'],cats:['k_top','k_bottom','k_inner','k_shoe']},
+  KB:{name:'Boys',sub:'4–14 yrs',bg:'K',fields:['height','weight','foot'],cats:['k_top','k_bottom','k_inner','k_shoe']},
+  T:{name:'Toddler',sub:'1–5 yrs',bg:'T',fields:['height','weight','foot'],cats:['t_wear','t_diaper','t_shoe']},
+  B:{name:'Baby',sub:'0–24 mo',bg:'B',fields:['height','weight','foot'],cats:['b_wear','b_diaper','b_shoe']},
+};
+const EXAMPLES={
+  W:{height:160,weight:58,bust:90,underbust:76,waist:74,hip:98,foot:23.5},
+  M:{height:174,weight:74,chest:98,waist:86,foot:26.5},
+  KG:{height:128,weight:26,foot:19},
+  KB:{height:134,weight:30,foot:20.5},
+  T:{height:95,weight:14,foot:14.5},
+  B:{height:70,weight:8,foot:11.5},
+};
+const TYPE_NAMES={a:'Clothing',i:'Innerwear',s:'Footwear',d:'Diapers'};
+
+// ---------- brands: [name, region(IN|US|G), groups, types, opts] ----------
+const ETH={sc:{w_bottom:'INL'}};
+const BR=[
+['Libas','IN','W','a',ETH],['Biba','IN','WK','a',ETH],['W for Woman','IN','W','a',ETH],['Aurelia','IN','W','a',ETH],['Global Desi','IN','W','a',ETH],
+['Fabindia','IN','WMK','a'],['Max Fashion','IN','WMKTB','ais'],['Westside','IN','WMK','ais'],['Pantaloons','IN','WMK','a'],['Zudio','IN','WMK','ais'],
+['Trends','IN','WMK','a'],['FBB','IN','WMK','a'],['Roadster','IN','WM','a'],['HRX','IN','WM','as'],
+['Snitch','IN','M','a',{n:'Mostly slim, fitted cuts. Pick relaxed styles if you are between sizes.'}],
+['Bewakoof','IN','WM','a',{n:'Oversized tees are cut big on purpose. Order your usual size for that look.'}],
+['The Souled Store','IN','WM','a',{n:'Oversized styles are cut big on purpose.'}],
+['Allen Solly','IN','WMK','a',{n:'Slim-fit shirts sit close. Choose regular fit if you are between sizes.'}],
+['Peter England','IN','M','a'],['Louis Philippe','IN','M','a'],['Raymond','IN','M','a'],['Arrow','IN','M','a'],['Van Heusen','IN','WM','ai'],
+['U.S. Polo Assn.','IN','WMK','ai'],['Spykar','IN','M','a'],['Pepe Jeans','IN','WM','a'],['Jack & Jones','IN','M','a'],['Vero Moda','IN','W','a'],['Only','IN','W','a'],['AND','IN','W','a'],
+['Marks & Spencer','IN','WMK','ai'],['Decathlon','IN','WMK','as',{n:'European sizing. Product pages list chest and waist in cm.'}],
+['Jockey','IN','WMK','ai',{n:'Indian Jockey innerwear uses its own waist chart, smaller than US letter sizes.'}],
+['Rupa','IN','MK','i'],['Lux Cozi','IN','M','i'],['Dollar','IN','M','i'],['VIP','IN','M','i'],['Amul Macho','IN','M','i'],['Damensch','IN','M','i'],['XYXX','IN','M','i'],
+['Zivame','IN','W','i'],['Clovia','IN','W','i'],['Amante','IN','W','i'],['Enamor','IN','W','i'],['Triumph','IN','W','i'],
+['BabyHug (FirstCry)','IN','KTB','asd'],['Hopscotch','IN','KTB','as'],['Mothercare','IN','KTB','as'],['Gini & Jony','IN','K','a'],['Mini Klub','IN','TB','a'],['MamyPoko','IN','TB','d'],
+['Bata','IN','WMK','s'],['Campus','IN','WM','s'],['Liberty','IN','WM','s'],['Sparx','IN','WM','s'],['Red Tape','IN','WM','as'],['Woodland','IN','WM','as'],
+['Metro','IN','WM','s'],['Mochi','IN','WM','s'],["Khadim's",'IN','WMK','s'],['Paragon','IN','WM','s'],
+['Zara','G','WMK','as',{f:1,n:'Cuts run slim. Common advice is to size up.'}],
+['H&M','G','WMKTB','ais',{fg:{W:1},n:"Women's fits often run small. Common advice is to size up."}],
+['Uniqlo','G','WMK','ai'],["Levi's",'G','WMK','a',{sc:{w_bottom:'W'}}],['Wrangler','G','WM','a'],['Lee','G','WM','a'],['Calvin Klein','G','WM','ai'],['Tommy Hilfiger','G','WMK','a'],
+['Shein','G','W','a',{f:1,n:"Often runs small. Size up and check the item's measurement table."}],
+['Nike','G','WMK','as',{fs:1,n:'Many running shoes fit snug. Common advice is half a size up.'}],['Adidas','G','WMK','as'],['Puma','G','WMK','as'],['Reebok','G','WM','as'],['Asics','G','WM','s'],
+['Skechers','G','WMK','s',{n:'Many styles come in a wide fit.'}],['Crocs','G','WMK','s',{whole:'up',n:'Whole sizes only. Most people with a half size go up.'}],['Clarks','G','WMK','s'],
+['Birkenstock','G','WMK','s',{sc:{w_shoe:'EU',m_shoe:'EU',k_shoe:'EU'},n:'Sold in EU sizes.'}],['New Balance','G','WMK','s',{n:'Many styles come in narrow to extra-wide.'}],
+['Pampers','G','TB','d'],['Huggies','G','TB','d'],
+['Old Navy','US','WMKTB','a',{n:'Shoppers often find the fit roomy.'}],['Gap','US','WMKTB','a'],['Banana Republic','US','WM','a'],['J.Crew','US','WMK','a'],['Madewell','US','W','a'],
+['Abercrombie & Fitch','US','WMK','a'],['American Eagle','US','WM','a'],['Aerie','US','W','ai'],['Hollister','US','WM','a'],['Express','US','WM','a'],['Ann Taylor','US','W','a'],['LOFT','US','W','a'],
+['A New Day (Target)','US','W','a'],['Goodfellow & Co (Target)','US','M','a'],['Cat & Jack (Target)','US','KTB','as'],['up&up (Target)','US','TB','d'],
+['Time and Tru (Walmart)','US','W','a'],['George (Walmart)','US','M','a'],['Garanimals (Walmart)','US','KTB','a'],["Parent's Choice (Walmart)",'US','TB','d'],
+["Sonoma (Kohl's)",'US','WM','a'],['Ralph Lauren','US','WMK','a'],['Carhartt','US','WM','a',{n:'Workwear cut, roomy through the chest and shoulders.'}],['Athleta','US','W','a'],
+['Lululemon','US','WM','a',{sc:{w_top:'USN',w_dress:'USN',w_bottom:'USN'},n:"Women's sizes use numbers (0–20)."}],
+["Victoria's Secret",'US','W','i'],['Soma','US','W','i'],['ThirdLove','US','W','i',{n:'Offers half-cup sizes if you fall between cups.'}],['Wacoal','US','W','i'],['Skims','US','W','ai'],['Savage X Fenty','US','W','i'],
+['Hanes','US','WMK','ai',{n:'Cotton basics can shrink a little after the first wash.'}],['Fruit of the Loom','US','WMK','i'],['Gildan','US','M','ai'],['Jockey','US','WM','i'],['Tommy John','US','M','i'],['Saxx','US','M','i'],['MeUndies','US','WM','i'],
+["Carter's",'US','KTB','as',{n:'If between sizes, size up. Kids grow fast.'}],["OshKosh B'gosh",'US','KT','a'],['Gerber','US','TB','a',{f:1,n:'Bodysuits run small. Common advice is to size up.'}],
+["The Children's Place",'US','KTB','as'],['Primary','US','KTB','a'],
+['Hanna Andersson','US','KTB','a',{sc:{k_top:'EU',k_bottom:'EU',k_inner:'EU',t_wear:'EU',b_wear:'EU'},n:'Labels sizes by height in cm, like 110.'}],
+['Stride Rite','US','KTB','s'],['Luvs','US','TB','d'],['Hello Bello','US','TB','d'],['Kirkland Signature','US','TB','d'],
+['Brooks','US','WM','s'],['Hoka','US','WM','s'],['Converse','US','WMK','s',{fs:-1,n:'Chuck Taylors run large. Common advice is half a size down.'}],['Vans','US','WMK','s'],
+['Steve Madden','US','W','s'],['Dr. Martens','US','WM','s',{whole:'down',n:'Whole sizes only. Most people with a half size go down.'}],['Merrell','US','WM','s'],
+].map(([n,r,g,t,o])=>({n,r,g,t,o:o||{}}));
+
+// ---------- sizing engines ----------
+function chart(scale,v){
+  let idx=-1,over=false,edge=false;
+  for(const k in scale.by){
+    const x=v[k]; if(x==null||isNaN(x)) continue;
+    const b=scale.by[k]; let i=b.findIndex(u=>x<=u), o=false;
+    if(i<0){i=b.length-1;o=true}
+    const e=!o&&(b[i]-x)<(k==='weight'?0.3:1);
+    if(i>idx){idx=i;over=o;edge=e}else if(i===idx){over=over||o;edge=edge||e}
+  }
+  return idx<0?null:{idx,over,edge};
+}
+const half=x=>Math.round(x*2)/2;
+const fmtN=x=>Number.isInteger(x)?String(x):x.toFixed(1);
+function shoe(kind,cm,off,whole){
+  cm=cm+off*0.42;
+  const ins=cm/IN2CM, eu=String(Math.round((cm+1.5)*1.5));
+  if(kind==='K'){
+    if(cm<19.5){const c=half(Math.max(0,(cm-9)/0.75));const u=Math.max(0,c-0.5);return {US:fmtN(c)+'C',UK:fmtN(u),IN:fmtN(u),EU:eu}}
+    const y=half(1+(cm-19.5)/0.85), u=y-0.5;
+    return {US:fmtN(y)+'Y',UK:u<1?'13.5':fmtN(u),IN:u<1?'13.5':fmtN(u),EU:eu};
+  }
+  let us=kind==='W'?half(3*ins-21):half(3*ins-22.5);
+  if(whole==='up')us=Math.ceil(us); if(whole==='down')us=Math.floor(us);
+  us=Math.max(1,us);
+  const uk=Math.max(1,us-(kind==='W'?2:1));
+  return {US:fmtN(us),UK:fmtN(uk),IN:fmtN(uk),EU:eu};
+}
+const CUP_US=['AA','A','B','C','D','DD','DDD','G','H'], CUP_UK=['AA','A','B','C','D','DD','E','F','FF'], CUP_EU=['AA','A','B','C','D','E','F','G','H'];
+function bra(v,off){
+  const eu=Math.max(60,Math.round(v.underbust/5)*5), band=(eu+10)/2.5;
+  const c=clamp(Math.floor((v.bust-v.underbust-9)/2)+off,0,8);
+  const res={US:band+CUP_US[c],UK:band+CUP_UK[c],IN:band+CUP_UK[c],EU:eu+CUP_EU[c],FR:(eu+15)+CUP_EU[c]};
+  const sis=[];
+  if(c>0)sis.push((band+2)+CUP_US[c-1]);
+  if(c<8&&band>28)sis.push((band-2)+CUP_US[c+1]);
+  return {res,sis};
+}
+function calc(catId,v,off,opt){
+  const cat=CATS[catId];
+  const missing=cat.need.filter(k=>v[k]==null||isNaN(v[k]));
+  if(missing.length)return {missing};
+  const out={};
+  if(cat.kind==='bra'){const b=bra(v,off);for(const k in b.res)out[k]={label:b.res[k]};return {res:out,sis:b.sis}}
+  if(cat.kind==='shoe'){const s=shoe(cat.shoe,v.foot,off,opt&&opt.whole);for(const k in s)out[k]={label:s[k]};return {res:out}}
+  for(const k in cat.scales){
+    const sc=cat.scales[k], r=chart(sc,v); if(!r)continue;
+    const j=clamp(r.idx+off,0,sc.labels.length-1);
+    out[k]={label:sc.labels[j]+(r.over&&j===sc.labels.length-1?'+':''),edge:r.edge&&off===0&&!r.over,over:r.over};
+  }
+  return {res:out};
+}
+
+// ---------- state ----------
+const LS='sizekey-state-v1', LSP='sizekey-people-v1';
+function load(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+function store(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+const saved=load(LS);
+const S=Object.assign({region:'IN',unit:'cm',group:'W',type:'all',q:'',vals:JSON.parse(JSON.stringify(EXAMPLES)),touched:{}},saved||{});
+S.q='';
+let people=load(LSP)||[];
+const persist=()=>store(LS,{region:S.region,unit:S.unit,group:S.group,vals:S.vals,touched:S.touched,type:S.type});
+
+const $=id=>document.getElementById(id);
+const imperial=()=>S.unit==='in';
+function toDisp(v,kind){
+  if(v==null||isNaN(v))return '';
+  const x=kind==='wt'?(imperial()?v*KG2LB:v):(imperial()?v/IN2CM:v);
+  return String(Math.round(x*10)/10);
+}
+const unitOf=kind=>kind==='wt'?(imperial()?'lb':'kg'):(imperial()?'in':'cm');
+const showLen=(k,v)=>toDisp(v,FIELDS[k].kind)+' '+unitOf(FIELDS[k].kind);
+
+// ---------- render ----------
+function renderTape(){
+  const n=$('tapeNums');n.innerHTML='';
+  for(let i=0;i<60;i++){const s=document.createElement('span');s.textContent=i;n.appendChild(s)}
+}
+function renderToggles(){
+  document.querySelectorAll('[data-region]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.region===S.region));
+  document.querySelectorAll('[data-unit]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.unit===S.unit));
+}
+function renderWho(){
+  $('who').innerHTML=Object.entries(GROUPS).map(([k,g])=>
+    `<button type="button" data-group="${k}" aria-pressed="${k===S.group}"><b>${g.name}</b><small>${g.sub}</small></button>`).join('');
+}
+function renderFields(){
+  const g=GROUPS[S.group], v=S.vals[S.group]||(S.vals[S.group]={});
+  $('fields').innerHTML=g.fields.map(f=>{
+    const m=FIELDS[f], help=m.help[S.group]||m.help._;
+    return `<div class="field"><label for="f-${f}">${m.label}</label>
+      <div class="inp"><input id="f-${f}" data-field="${f}" type="number" inputmode="decimal" min="0" step="0.1" value="${toDisp(v[f],m.kind)}"><span>${unitOf(m.kind)}</span></div>
+      <p>${help}</p></div>`;
+  }).join('');
+  $('example').hidden=!!S.touched[S.group];
+}
+function cardHTML(catId){
+  const cat=CATS[catId], v=S.vals[S.group]||{}, r=calc(catId,v,0);
+  if(r.missing){
+    const names=r.missing.map(k=>FIELDS[k].label.toLowerCase());
+    return `<article class="tag is-missing"><span class="label">${cat.name}</span>
+      <div class="big"><span class="val">—</span></div><p class="missing" style="margin:0">Add your ${names.join(' and ')} to see this.</p></article>`;
+  }
+  const pk=cat.primary[S.region], names=cat.names||Object.fromEntries(Object.entries(cat.scales).map(([k,s])=>[k,s.name]));
+  const keys=(cat.keys||Object.keys(cat.scales)).filter(k=>k!==pk&&r.res[k]);
+  const p=r.res[pk]||{label:'—'};
+  const seen=new Set([names[pk]+p.label]);
+  const alts=keys.filter(k=>{const id=names[k]+r.res[k].label;if(seen.has(id))return false;seen.add(id);return true})
+    .map(k=>`<span class="alt"><i>${names[k]}</i>${esc(r.res[k].label)}</span>`).join('');
+  const basis=cat.need.map(k=>`${FIELDS[k].label} ${showLen(k,v[k])}`).join(' · ');
+  let hint='';
+  if(p.over)hint='Beyond this chart. Look for plus or extended sizes.';
+  else if(p.edge)hint='Right at the edge of this size. Go one up for a looser fit.';
+  const extra=r.sis&&r.sis.length?`<span class="basis">Sister sizes: ${r.sis.join(', ')}</span>`:'';
+  return `<article class="tag"><span class="label">${cat.name}</span>
+    <div class="big"><span class="sys">${names[pk]}</span><span class="val">${esc(p.label)}</span></div>
+    ${alts?`<div class="alts">${alts}</div>`:''}
+    ${hint?`<span class="hint">${hint}</span>`:''}
+    ${cat.note?`<span class="basis" style="font-family:var(--f-body);font-size:12px">${cat.note}</span>`:''}
+    ${extra}<span class="basis">${basis}</span></article>`;
+}
+function renderCards(){
+  $('cards').innerHTML=GROUPS[S.group].cats.map(cardHTML).join('');
+  $('stdNote').textContent=S.region==='IN'?'Big number: Indian sizing. Others for imports and travel.':'Big number: US sizing. Others for imports and travel.';
+}
+function groupTypes(){return [...new Set(GROUPS[S.group].cats.map(c=>CATS[c].type))]}
+function renderTypes(){
+  const t=groupTypes(); if(S.type!=='all'&&!t.includes(S.type))S.type='all';
+  $('types').innerHTML=[['all','All']].concat(t.map(x=>[x,TYPE_NAMES[x]]))
+    .map(([k,n])=>`<button type="button" data-type="${k}" aria-pressed="${k===S.type}">${n}</button>`).join('');
+}
+function brandChips(b,custom){
+  const g=GROUPS[S.group], v=S.vals[S.group]||{}, reg=b.r==='G'||custom?S.region:b.r;
+  const cats=g.cats.filter(c=>custom||b.t.includes(CATS[c].type));
+  if(!cats.length)return null;
+  return cats.map(c=>{
+    const cat=CATS[c], o=b.o||{};
+    const key=(o.sc&&o.sc[c])||cat.primary[reg];
+    let off=0;
+    if(cat.type==='a')off=(o.fg&&o.fg[g.bg]!=null)?o.fg[g.bg]:(o.f||0);
+    if(cat.type==='s')off=o.fs||0;
+    const r=calc(c,v,off,{whole:o.whole});
+    if(r.missing||!r.res[key])return `<span class="bs off">${cat.short} <b>—</b></span>`;
+    const names=cat.names||Object.fromEntries(Object.entries(cat.scales).map(([k,s])=>[k,s.name]));
+    const tag=key!==cat.primary[reg]||cat.kind==='shoe'?names[key]+' ':'';
+    return `<span class="bs">${cat.short} <b>${esc(tag+r.res[key].label)}</b></span>`;
+  }).join('');
+}
+function renderBrands(){
+  const g=GROUPS[S.group], q=S.q.trim().toLowerCase();
+  const list=BR.filter(b=>(b.r===S.region||b.r==='G')&&b.g.includes(g.bg)&&(S.type==='all'||b.t.includes(S.type))&&(!q||b.n.toLowerCase().includes(q)))
+    .sort((a,b)=>a.n.localeCompare(b.n));
+  const origin=r=>r==='IN'?'India':r==='US'?'US':'Global';
+  let html='';
+  if(q&&!list.some(b=>b.n.toLowerCase()===q)){
+    const chips=brandChips({n:S.q,r:S.region,g:g.bg,t:'aisd',o:{}},true);
+    html+=`<li class="brand custom"><div><div class="bname">${esc(S.q.trim())} <span class="origin">Not listed</span></div>
+      <div class="bnote">Using the standard ${S.region==='IN'?'Indian':'US'} chart. Most brands follow it closely.</div></div>
+      <div class="bsizes">${chips}</div></li>`;
+  }
+  let n=0;
+  for(const b of list){
+    const chips=brandChips(b); if(!chips)continue; n++;
+    html+=`<li class="brand"><div><div class="bname">${esc(b.n)} <span class="origin">${origin(b.r)}</span></div>
+      ${b.o.n?`<div class="bnote">${esc(b.o.n)}</div>`:''}</div><div class="bsizes">${chips}</div></li>`;
+  }
+  if(!n&&!q)html='<li class="brand"><span class="missing">No brands for this filter yet.</span></li>';
+  $('brands').innerHTML=html;
+  $('count').textContent=`${n} brand${n===1?'':'s'} for ${g.name.toLowerCase()} in ${S.region==='IN'?'India':'the US'}`;
+}
+function renderPeople(){
+  $('people').innerHTML=people.length?people.map((p,i)=>
+    `<span class="person"><button type="button" data-load="${i}">${esc(p.name)} <span style="color:var(--muted);font-weight:400">· ${GROUPS[p.group].name}</span></button><button type="button" class="x" data-del="${i}" aria-label="Remove ${esc(p.name)}">×</button></span>`).join('')
+    :'<p class="empty-note">Save measurements for each family member and switch between them.</p>';
+}
+function renderResults(){renderCards();renderBrands()}
+function renderAll(){renderToggles();renderWho();renderFields();renderTypes();renderResults();renderPeople()}
+
+// ---------- events ----------
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button'); if(!t)return;
+  if(t.dataset.region){S.region=t.dataset.region;renderToggles();renderResults();persist()}
+  else if(t.dataset.unit){S.unit=t.dataset.unit;renderToggles();renderFields();renderCards();persist()}
+  else if(t.dataset.group){S.group=t.dataset.group;renderWho();renderFields();renderTypes();renderResults();persist()}
+  else if(t.dataset.type){S.type=t.dataset.type;renderTypes();renderBrands();persist()}
+  else if(t.dataset.load!=null){const p=people[+t.dataset.load];S.group=p.group;S.vals[p.group]=Object.assign({},p.vals);S.touched[p.group]=true;$('saveName').value=p.name;renderAll();persist()}
+  else if(t.dataset.del!=null){people.splice(+t.dataset.del,1);store(LSP,people);renderPeople()}
+  else if(t.id==='clearBtn'){S.vals[S.group]={};S.touched[S.group]=true;renderFields();renderResults();persist()}
+});
+document.addEventListener('input',e=>{
+  const f=e.target.dataset&&e.target.dataset.field;
+  if(f){
+    const raw=parseFloat(e.target.value), kind=FIELDS[f].kind, v=S.vals[S.group];
+    v[f]=isNaN(raw)||raw<=0?null:(kind==='wt'?(imperial()?raw/KG2LB:raw):(imperial()?raw*IN2CM:raw));
+    if(!S.touched[S.group]){S.touched[S.group]=true;$('example').hidden=true}
+    renderResults();persist();
+  } else if(e.target.id==='q'){S.q=e.target.value;renderBrands()}
+});
+$('saveForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const name=$('saveName').value.trim(); if(!name)return $('saveName').focus();
+  const rec={name,group:S.group,vals:Object.assign({},S.vals[S.group])};
+  const i=people.findIndex(p=>p.name.toLowerCase()===name.toLowerCase());
+  if(i>=0)people[i]=rec;else people.push(rec);
+  store(LSP,people);renderPeople();
+});
+
+renderTape();renderAll();
+window.__sizekey={calc,CATS};
+})();
+</script>
+
+</body>
+</html>
