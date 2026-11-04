@@ -7,7 +7,11 @@ SizeKey helps you find clothing, innerwear, footwear and diaper sizes from your 
 
 ## What we collect
 
-Nothing. SizeKey has no accounts, no sign-up, no server database and no analytics or advertising trackers.
+SizeKey has no accounts, no sign-up and no server database. Your measurements are never collected.
+
+If you choose **Accept** on the cookie banner, we use Google Analytics to count visits and understand how the site is used, such as which pages are opened, roughly which country visitors come from, and what device and browser they use. This helps us improve SizeKey. Google Analytics does not receive your measurements, saved names or sizes.
+
+If you choose **Decline**, Google Analytics is not loaded at all.
 
 ## What stays on your device
 
@@ -25,12 +29,13 @@ Parents and guardians can enter measurements for children and babies. That infor
 
 ## Third-party services
 
-Loading the page involves two outside services, which may see your IP address and basic browser details as part of normal web traffic:
+Loading the page involves these outside services, which may see your IP address and basic browser details as part of normal web traffic:
 
 - **Website hosting.** The site's host serves the page files and may keep standard server logs.
 - **Google Fonts.** The page loads its typefaces from Google Fonts. See Google's privacy policy at https://policies.google.com/privacy.
+- **Google Analytics.** Only if you accept analytics cookies. Google processes this data under its own privacy policy at https://policies.google.com/privacy. You can also opt out of Google Analytics on all websites at https://tools.google.com/dlpage/gaoptout.
 
-Neither service receives your measurements.
+None of these services receive your measurements.
 
 ## Brand links and sizes
 
@@ -38,7 +43,7 @@ SizeKey shows estimated sizes for brands. It does not share any information with
 
 ## Cookies
 
-SizeKey does not set cookies.
+SizeKey itself does not set cookies. If you accept analytics, Google Analytics sets cookies (such as _ga) to tell visits apart. Your choice is remembered in your browser. To change it, clear this site's data in your browser and choose again.
 
 ## Changes to this policy
 

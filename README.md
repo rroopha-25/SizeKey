@@ -24,7 +24,7 @@ SizeKey puts all of this in one place. You enter your measurements once and see 
 | | |
 |---|---|
 | **People** | Women, men, girls, boys, toddlers (1–5 yrs) and babies (0–24 months) |
-| **Clothing** | Tops and shirts, dresses and kurtas, jeans and trousers, kids' clothing |
+| **Clothing** | Tops and shirts, dresses and kurtas, jeans and trousers (waist × length, with fit tips from hips and thighs), kids' clothing |
 | **Innerwear** | Bras (band and cup, with sister sizes), panties, briefs and trunks, vests, kids' innerwear |
 | **Footwear** | Adult, youth, child and baby sizes |
 | **Diapers** | Diapers and pull-ups, sized by weight |
@@ -72,7 +72,7 @@ Brand sizes are estimates from standard size charts and each brand's general fit
 
 - Replace the estimates with each brand's published size chart, stored as data files
 - Per-product fit (slim, regular, oversized)
-- More measurements (neck, inseam, shoulder) for shirts and trousers
+- More measurements (neck, shoulder) for shirts
 - More brands and countries
 
 ## License

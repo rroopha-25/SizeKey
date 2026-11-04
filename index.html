@@ -4,7 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Enter your measurements once and find your size for clothing, innerwear, bras, footwear and diapers across Indian, US, UK and EU charts and 140+ brands.">
-<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}
+.consent{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);
+  padding-block:14px calc(14px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:center;font-size:13.5px;box-shadow:0 -6px 24px rgba(0,0,0,.08)}
+.consent p{margin:0;max-width:62ch}
+.consent .btns{display:flex;gap:8px}
+.consent button{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:7px 14px;font-weight:700;cursor:pointer}
+.consent button.yes{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+</style>
 <title>SizeKey</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -40,6 +48,7 @@ button,input{font:inherit;color:inherit}
 .mast-top{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:end;justify-content:space-between}
 h1{font-size:clamp(34px,6vw,52px);font-weight:800;letter-spacing:-.02em;line-height:1}
 h1 span{color:var(--muted);font-weight:500}
+.byline{margin:6px 0 0;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}.byline b{color:var(--ink)}
 .lede{margin:6px 0 0;color:var(--muted);max-width:56ch}
 .tape{position:relative;height:38px;border-radius:3px;background-color:var(--tape);overflow:hidden;
   background-image:repeating-linear-gradient(90deg,var(--tape-ink) 0 1.5px,transparent 1.5px 40px),
@@ -140,6 +149,7 @@ details.howto ul{margin:8px 0 0;padding-left:18px;color:var(--muted);display:gri
     <div class="mast-top">
       <div>
         <h1>SizeKey</h1>
+        <p class="byline">Built by <b>Roopha</b></p>
         <p class="lede">Measure once. See your size in Indian, US, UK and EU charts, and in the brands you actually shop, from clothes to innerwear, shoes and diapers.</p>
       </div>
       <div class="toggles">
@@ -202,6 +212,7 @@ details.howto ul{margin:8px 0 0;padding-left:18px;color:var(--muted);display:gri
   </div>
 
   <p class="foot">Sizes are estimates from standard size charts and each brand's usual fit. Brands change cuts between styles, so check the size chart on the product page before you buy. Your measurements never leave your device. <a href="privacy.html" style="color:inherit">Privacy policy</a>. Bra sizes follow the band-and-cup method most Indian and US brands publish; specialist fitters may suggest one band smaller and one cup larger.</p>
+  <p class="foot" style="margin-top:8px;padding-top:0;border:0">© 2026 SizeKey · Built by Roopha</p>
 </div>
 
 <script>
@@ -249,7 +260,7 @@ const CATS={
     USL:{name:'US',labels:WL,by:WLB},
     UK:{name:'UK',labels:UKN,by:{bust:mid(WB,4),waist:mid(WW,4),hip:mid(WH,4)}},
     EU:{name:'EU',labels:EUN,by:{bust:mid(WB,4),waist:mid(WW,4),hip:mid(WH,4)}}}},
-  w_bottom:{name:'Jeans, trousers & leggings',short:'Jeans',type:'a',need:['waist'],primary:{IN:'W',US:'USN'},scales:{
+  w_bottom:{name:'Jeans, trousers & leggings',short:'Jeans',type:'a',need:['waist'],pants:'W',primary:{IN:'W',US:'USN'},scales:{
     W:{name:'Waist',labels:seq(24,9,2),by:{waist:inchUB(24,9)}},
     INL:{name:'India',labels:INL,by:{waist:inchUB(26,9),hip:inchUB(36,9)}},
     USN:{name:'US',labels:USN,by:{waist:mid(WW,4),hip:mid(WH,4)}},
@@ -266,9 +277,9 @@ const CATS={
   m_top:{name:'Shirts & T-shirts',short:'Shirt',type:'a',need:['chest'],primary:{IN:'IN',US:'USL'},scales:{
     IN:{name:'India',labels:['XS (36)','S (38)','M (40)','L (42)','XL (44)','XXL (46)','3XL (48)','4XL (50)'],by:{chest:[89,95,103,110,118,126,133,141]}},
     USL:{name:'US',labels:['XS','S','M','L','XL','XXL','3XL','4XL'],by:{chest:[89,95,103,110,118,126,133,141]}}}},
-  m_bottom:{name:'Jeans & trousers',short:'Jeans',type:'a',need:['waist'],primary:{IN:'W',US:'W'},scales:{
+  m_bottom:{name:'Jeans & trousers',short:'Jeans',type:'a',need:['waist'],pants:'M',primary:{IN:'W',US:'W'},scales:{
     W:{name:'Waist',labels:seq(26,12,2),by:{waist:inchUB(26,12)}},
-    USL:{name:'US',labels:['XS','S','M','L','XL','XXL','3XL'],by:{waist:[74,81,89,97,107,117,127]}},
+    USL:{name:'US',labels:['XS','S','M','L','XL','XXL','3XL'],by:{waist:[74,81,89,97,107,117,127],hip:[92,99,106,113,121,129,137]}},
     EU:{name:'EU',labels:seq(42,12,2),by:{waist:inchUB(26,12)}}}},
   m_brief:{name:'Briefs, trunks & boxers',short:'Briefs',type:'i',need:['waist'],primary:{IN:'IN',US:'USL'},scales:{
     IN:{name:'India',labels:['S','M','L','XL','XXL','3XL','4XL'],by:{waist:[80,85,90,95,100,105,110]}},
@@ -307,19 +318,21 @@ const FIELDS={
   waist:{label:'Waist',kind:'len',help:{_:'Narrowest part, above the navel.',M:'Where your trousers sit.'}},
   hip:{label:'Hips',kind:'len',help:{_:'Fullest part of hips and seat.'}},
   foot:{label:'Foot length',kind:'len',help:{_:'Heel to longest toe.'}},
+  thigh:{label:'Thigh',kind:'len',help:{_:'Fullest part of one thigh, just below the crotch.'}},
+  inseam:{label:'Inseam',kind:'len',help:{_:'Crotch to ankle bone, along the inside leg.'}},
 };
 
 const GROUPS={
-  W:{name:'Women',sub:'Adult',bg:'W',fields:['height','weight','bust','underbust','waist','hip','foot'],cats:['w_top','w_dress','w_bottom','w_bra','w_panty','w_shoe']},
-  M:{name:'Men',sub:'Adult',bg:'M',fields:['height','weight','chest','waist','foot'],cats:['m_top','m_bottom','m_brief','m_vest','m_shoe']},
+  W:{name:'Women',sub:'Adult',bg:'W',fields:['height','weight','bust','underbust','waist','hip','thigh','inseam','foot'],cats:['w_top','w_dress','w_bottom','w_bra','w_panty','w_shoe']},
+  M:{name:'Men',sub:'Adult',bg:'M',fields:['height','weight','chest','waist','hip','thigh','inseam','foot'],cats:['m_top','m_bottom','m_brief','m_vest','m_shoe']},
   KG:{name:'Girls',sub:'4–14 yrs',bg:'K',fields:['height','weight','foot'],cats:['k_top','k_bottom','k_inner','k_shoe']},
   KB:{name:'Boys',sub:'4–14 yrs',bg:'K',fields:['height','weight','foot'],cats:['k_top','k_bottom','k_inner','k_shoe']},
   T:{name:'Toddler',sub:'1–5 yrs',bg:'T',fields:['height','weight','foot'],cats:['t_wear','t_diaper','t_shoe']},
   B:{name:'Baby',sub:'0–24 mo',bg:'B',fields:['height','weight','foot'],cats:['b_wear','b_diaper','b_shoe']},
 };
 const EXAMPLES={
-  W:{height:160,weight:58,bust:90,underbust:76,waist:74,hip:98,foot:23.5},
-  M:{height:174,weight:74,chest:98,waist:86,foot:26.5},
+  W:{height:160,weight:58,bust:90,underbust:76,waist:74,hip:98,thigh:56,inseam:76,foot:23.5},
+  M:{height:174,weight:74,chest:98,waist:86,hip:98,thigh:56,inseam:80,foot:26.5},
   KG:{height:128,weight:26,foot:19},
   KB:{height:134,weight:30,foot:20.5},
   T:{height:95,weight:14,foot:14.5},
@@ -420,6 +433,22 @@ function calc(catId,v,off,opt){
     const j=clamp(r.idx+off,0,sc.labels.length-1);
     out[k]={label:sc.labels[j]+(r.over&&j===sc.labels.length-1?'+':''),edge:r.edge&&off===0&&!r.over,over:r.over};
   }
+  if(cat.pants){
+    if(v.inseam>0){
+      const L=clamp(2*Math.round(v.inseam/IN2CM/2),26,38);
+      const band=cat.pants==='W'?(v.inseam<74?'Petite':v.inseam<=81?'Regular':'Tall'):(v.inseam<76?'Short':v.inseam<=84?'Regular':'Long');
+      out._len={L,band};
+      for(const k in out)if(k==='W')out[k].label=out[k].label+' × '+L;
+    }
+    if(v.thigh>0){
+      const ratio=cat.pants==='W'?(v.hip>0?v.thigh/v.hip:null):v.thigh/v.waist;
+      if(ratio!=null){
+        const hi=cat.pants==='W'?0.62:0.68, lo=cat.pants==='W'?0.54:0.6;
+        if(ratio>hi)out._fit='Fuller thighs: choose relaxed, straight or '+(cat.pants==='W'?'curve':'athletic')+' fits. Skinny cuts may feel tight.';
+        else if(ratio<lo)out._fit='Slim thighs: slim and skinny fits will sit well.';
+      }
+    }
+  }
   return {res:out};
 }
 
@@ -474,16 +503,20 @@ function cardHTML(catId){
       <div class="big"><span class="val">—</span></div><p class="missing" style="margin:0">Add your ${names.join(' and ')} to see this.</p></article>`;
   }
   const pk=cat.primary[S.region], names=cat.names||Object.fromEntries(Object.entries(cat.scales).map(([k,s])=>[k,s.name]));
-  const keys=(cat.keys||Object.keys(cat.scales)).filter(k=>k!==pk&&r.res[k]);
+  const keys=(cat.keys||Object.keys(cat.scales)).filter(k=>k!==pk&&r.res[k]&&k[0]!=='_');
   const p=r.res[pk]||{label:'—'};
   const seen=new Set([names[pk]+p.label]);
   const alts=keys.filter(k=>{const id=names[k]+r.res[k].label;if(seen.has(id))return false;seen.add(id);return true})
     .map(k=>`<span class="alt"><i>${names[k]}</i>${esc(r.res[k].label)}</span>`).join('');
-  const basis=cat.need.map(k=>`${FIELDS[k].label} ${showLen(k,v[k])}`).join(' · ');
+  const bk=cat.pants?cat.need.concat(['hip','thigh','inseam'].filter(k=>v[k]>0)):cat.need;
+  const basis=bk.map(k=>`${FIELDS[k].label} ${showLen(k,v[k])}`).join(' · ');
   let hint='';
   if(p.over)hint='Beyond this chart. Look for plus or extended sizes.';
   else if(p.edge)hint='Right at the edge of this size. Go one up for a looser fit.';
-  const extra=r.sis&&r.sis.length?`<span class="basis">Sister sizes: ${r.sis.join(', ')}</span>`:'';
+  let extra=r.sis&&r.sis.length?`<span class="basis">Sister sizes: ${r.sis.join(', ')}</span>`:'';
+  if(r.res._len)extra+=`<span class="alts"><span class="alt"><i>Length</i>L${r.res._len.L}</span><span class="alt"><i>Leg</i>${r.res._len.band}</span></span>`;
+  else if(cat.pants)extra+=`<span class="basis" style="font-family:var(--f-body);font-size:12px">Add your inseam to get your pants length.</span>`;
+  if(r.res._fit)extra+=`<span class="hint">${r.res._fit}</span>`;
   return `<article class="tag"><span class="label">${cat.name}</span>
     <div class="big"><span class="sys">${names[pk]}</span><span class="val">${esc(p.label)}</span></div>
     ${alts?`<div class="alts">${alts}</div>`:''}
@@ -582,5 +615,29 @@ window.__sizekey={calc,CATS};
 })();
 </script>
 
+
+<div class="consent" id="consent" hidden role="region" aria-label="Cookie choice">
+  <p>SizeKey uses Google Analytics cookies to count visits. Your measurements are never shared. <a href="privacy.html" style="color:inherit">Privacy policy</a></p>
+  <div class="btns"><button type="button" id="cNo">Decline</button><button type="button" class="yes" id="cYes">Accept</button></div>
+</div>
+<script>
+(function(){
+  var GA_ID='G-XXXXXXXXXX'; // replace with your Google Analytics Measurement ID
+  var KEY='sizekey-consent';
+  function get(){try{return localStorage.getItem(KEY)}catch(e){return null}}
+  function set(v){try{localStorage.setItem(KEY,v)}catch(e){}}
+  function load(){
+    if(!/^G-[A-Z0-9]+$/.test(GA_ID)||GA_ID==='G-XXXXXXXXXX')return;
+    var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id='+GA_ID;document.head.appendChild(s);
+    window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};
+    gtag('js',new Date());gtag('config',GA_ID);
+  }
+  var c=get(), box=document.getElementById('consent');
+  if(GA_ID==='G-XXXXXXXXXX')return;
+  if(c==='yes')load(); else if(c!=='no')box.hidden=false;
+  document.getElementById('cYes').onclick=function(){set('yes');box.hidden=true;load()};
+  document.getElementById('cNo').onclick=function(){set('no');box.hidden=true};
+})();
+</script>
 </body>
 </html>
