@@ -49,6 +49,12 @@ SizeKey puts all of this in one place. You enter your measurements once and see 
 
 <img src="5-baby-mobile.png" alt="Baby sizes on mobile" width="320">
 
+## Coming soon: the SizeKey app
+
+An iPhone and Android app is in progress, with the same sizes as the website plus family profiles, re-measure reminders for kids and a shareable size card.
+
+![SizeKey app screens](6-app-preview.png)
+
 ## Other features
 
 - Save measurements for each family member and switch between them
